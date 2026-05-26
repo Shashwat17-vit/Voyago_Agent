@@ -14,7 +14,7 @@ USE_MOCK = os.getenv("USE_MOCK", "false").lower() == "true"
 llm = ChatGroq(
     model="llama-3.3-70b-versatile",
     api_key=os.getenv("GROQ_API_KEY"),
-    max_tokens=4096
+    max_tokens=8192
 )
 
 tavily = TavilySearch(
@@ -90,13 +90,47 @@ builder.add_edge("generate", END)
 graph = builder.compile()
 
 # --- Helpers ---
+import re
+import logging
+
+logger = logging.getLogger(__name__)
+
 def extract_json(text: str) -> dict:
     text = text.strip()
     if text.startswith("```"):
         text = text.split("```")[1]
         if text.startswith("json"):
             text = text[4:]
-    return json.loads(text.strip())
+    text = text.strip()
+
+    try:
+        return json.loads(text)
+    except json.JSONDecodeError:
+        pass
+
+    # Try to find the outermost JSON object
+    match = re.search(r'\{.*\}', text, re.DOTALL)
+    if match:
+        candidate = match.group(0)
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            pass
+
+        # Attempt to fix truncated JSON by closing open brackets
+        fixed = candidate
+        open_braces = fixed.count('{') - fixed.count('}')
+        open_brackets = fixed.count('[') - fixed.count(']')
+        # Remove trailing comma before closing
+        fixed = re.sub(r',\s*$', '', fixed)
+        fixed += ']' * open_brackets + '}' * open_braces
+        try:
+            return json.loads(fixed)
+        except json.JSONDecodeError as e:
+            logger.error("JSON repair failed: %s\nRaw text (last 500 chars): ...%s", e, text[-500:])
+            raise
+
+    raise json.JSONDecodeError("No JSON object found in LLM response", text, 0)
 
 def mock_itinerary(trip: dict) -> dict:
     return {
