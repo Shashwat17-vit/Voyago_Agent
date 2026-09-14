@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: agent
-          image: 729231827726.dkr.ecr.us-east-2.amazonaws.com/dev/voyago:agent-<FULL_SHA>
+          image: 729231827726.dkr.ecr.us-east-2.amazonaws.com/dev/voyago:agent-916ad5de786e578f0b569a161c63d23b57febce9
           ports:
             - containerPort: 8000
           env:
