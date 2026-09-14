@@ -1,9 +1,11 @@
 name: Push agent image to ECR
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+    push:
+      branches: [main]
+      paths-ignore:
+        - 'k8s/**'
+    workflow_dispatch:
 
 env:
   AWS_REGION: us-east-2
