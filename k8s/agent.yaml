@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agent
+  namespace: voyago
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: agent
+  template:
+    metadata:
+      labels:
+        app: agent
+    spec:
+      containers:
+        - name: agent
+          image: 729231827726.dkr.ecr.us-east-2.amazonaws.com/dev/voyago:agent
+          ports:
+            - containerPort: 8000
+          env:
+            - name: GROQ_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: voyago-secrets
+                  key: GROQ_API_KEY
+            - name: TAVILY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: voyago-secrets
+                  key: TAVILY_API_KEY
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: agent
+  namespace: voyago
+spec:
+  selector:
+    app: agent
+  ports:
+    - port: 8000
+      targetPort: 8000
