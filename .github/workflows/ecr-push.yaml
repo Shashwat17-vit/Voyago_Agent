@@ -7,6 +7,9 @@ on:
         - 'k8s/**'
     workflow_dispatch:
 
+permissions:
+  contents: write
+
 env:
   AWS_REGION: us-east-2
   ECR_REPOSITORY: dev/voyago
@@ -44,3 +47,13 @@ jobs:
           sbom: false
           tags: |
             ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}-${{ github.sha }}
+
+      - name: Pin image tag in kustomization
+        run: |
+          TAG="${IMAGE_TAG}-${GITHUB_SHA}"
+          sed -i "s/^    newTag:.*/    newTag: ${TAG}/" k8s/kustomization.yaml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add k8s/kustomization.yaml
+          git diff --staged --quiet || git commit -m "build: pin ${TAG}"
+          git push

@@ -63,7 +63,6 @@ Destination: {trip['destination']}
 Dates: {trip['startDate']} to {trip['endDate']}
 Travelers: {trip['numTravelers']}
 From: {prefs['currentLocation']}
-Budget: {prefs['budget']}
 Type: {prefs['tripType']}
 Accommodation: {prefs['accommodation']}
 Transportation: {prefs['transportation']}
