@@ -4,4 +4,4 @@ resources:
   - agent.yaml
 images:
   - name: 729231827726.dkr.ecr.us-east-2.amazonaws.com/dev/voyago
-    newTag: agent-79a61a68caf2d69b6385a1b577d255b80063946e
+    newTag: agent-43e64280ccd8b7c9bb3d0fc0c0e647e22418c663
