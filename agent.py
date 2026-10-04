@@ -72,8 +72,12 @@ Notes: {prefs.get('notes', '')}
 Real highlights found:
 {context}
 
+Cover every calendar day from startDate to endDate inclusive.
+Times must be 24-hour HH:mm (example "09:00"). Never "9:00 AM".
+Use real place coordinates. If you do not know them, omit latitude and longitude — never use 0.0.
+
 Return ONLY valid JSON, no markdown:
-{{"days":[{{"dayNumber":1,"dayLabel":"Day 1 — City","date":"YYYY-MM-DD","events":[{{"title":"","description":"","locationName":"","latitude":0.0,"longitude":0.0,"category":"SIGHTSEEING","startTime":"09:00","endTime":"11:00","orderIndex":1}}]}}]}}
+{{"days":[{{"dayNumber":1,"dayLabel":"Day 1 — City","date":"YYYY-MM-DD","events":[{{"title":"","description":"","locationName":"","latitude":48.8566,"longitude":2.3522,"category":"SIGHTSEEING","startTime":"09:00","endTime":"11:00","orderIndex":1}}]}}]}}
 Categories: SIGHTSEEING, FOOD, ACTIVITY, TRANSPORT, ACCOMMODATION. 3-4 events per day."""
 
     response = llm.invoke([HumanMessage(content=prompt)])
